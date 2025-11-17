@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EasyCart</title>
+    <!-- bootstrap CSS link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <!-- css file -->
+    <link rel="stylesheet" href="../style.css"> 
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-success p-2">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <img src="../images/logo.png" alt="EasyCart Logo" class="logo">
+            </a>
+            <span class="navbar-text text-light ms-auto me-3">
+                Welcome Guest
+            </span>
+        </div>
+    </nav>
+    
+    <div class="bg-light p-3 border-bottom">
+        <h2 class="text-center text-dark">Manage Details</h2>
+    </div>
+
+    <div class="bg-secondary p-3">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-3 d-flex flex-column align-items-center text-light">
+                    <img src="../images/admin.png" alt="Admin" class="admin-profile-img rounded-circle mb-2 border border-3 border-warning">
+                    <span class="fw-bold">Admin Minds</span>
+                </div>
+                
+                <div class="col-md-9 d-flex flex-wrap justify-content-end">
+                    <a class="btn btn-warning m-1" href="insert-product.html">Insert Products</a>
+                    <a class="btn btn-warning m-1" href="manage-products.html">View Products</a>
+                    <a class="btn btn-warning m-1" href="insert-category.html">Insert Categories</a>
+                    <a class="btn btn-warning m-1" href="manage-categories.html">View Categories</a>
+                    <a class="btn btn-warning m-1" href="insert-brand.html">Insert Brands</a>
+                    <a class="btn btn-warning m-1" href="manage-brands.html">View Brands</a>
+                    <a class="btn btn-info m-1" href="manage-orders.html">All Orders</a>
+                    <button class="btn btn-info m-1">All Payments</button>
+                    <a class="btn btn-primary m-1" href="manage-user.html">List Users</a>
+                    <button class="btn btn-danger m-1">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-fluid p-4">
+        <h4 class="text-center text-muted">Select an action above to manage data.</h4>
+        </div>
+
+    <div class="bg-success p-3 text-center fixed-bottom">
+        <p class="text-light m-0">All rights reserved ©-Designed by Relational Minds</p>
+    </div>
+<!-- bootstrap js link -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
