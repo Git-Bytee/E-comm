@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyCart E-Commerce Website</title>
+    <!-- bootstrap CSS link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <!-- css file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container-fluid p-0">
+        
+        <nav class="navbar navbar-expand-lg navbar-light bg-success">
+  <div class="container-fluid">
+    <img src="./images/logo.png" alt="" class="logo">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="register.php">Register</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" id="cart-icon"><i class="fa-solid fa-cart-shopping"></i><sup id="cart-count">0</sup></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" id="total-price">Total Price: ₹0/-</a>
+        </li>
+        </ul>
+      <form class="d-flex" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="search-input"/>
+        <button class="btn btn-outline-light" type="button" onclick="searchProducts()">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+    <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link text-light" href="#" id="welcome-user">Welcome Guest</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-light" href="login.php" id="login-logout">Login</a>
+        </li>
+ </ul>
+</nav>
+
+<div class="bg-light p-3 mx-2 rounded-3"> 
+  <h3 class="text-center soft-blink">EasyCart</h3>
+  <p class="text-center soft-blink">Your easy way to shop online!</p>
+</div>
+<div class="row px-3">
+  <div class="col-md-10">
+    <!-- products row -->
+    <div class="row" id="products-container">
+        <!-- Products will be loaded here dynamically -->
+    </div>
+      <!-- col end -->
+  </div>
+
+  <div class="col-md-2 bg-secondary p-0">
+
+      <div class="p-3">
+        <div class="filter-panel p-2">
+          <div class="filter-section mb-3">
+            <h5><i class="fa-solid fa-filter me-2"></i>Delivery Brands <span class="badge bg-danger badge-count ms-2" id="brands-count">0</span></h5>
+            <div id="brands-list">Loading brands...</div>
+          </div>
+
+          <div class="filter-section mb-3">
+            <h5><i class="fa-solid fa-list me-2"></i>Categories <span class="badge bg-danger badge-count ms-2" id="categories-count">0</span></h5>
+            <div id="categories-list">Loading categories...</div>
+          </div>
+
+          <div class="filter-section mb-3">
+            <h5><i class="fa-solid fa-tag me-2"></i>Price Range</h5>
+            <div class="price-range-inputs">
+              <input type="text" id="minPrice" class="form-control" placeholder="Min Price">
+              <input type="text" id="maxPrice" class="form-control" placeholder="Max Price">
+              <button class="btn btn-success" onclick="applyPrice()">Apply Price</button>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <h5><i class="fa-solid fa-sort me-2"></i>Sort By</h5>
+            <select id="sortSelect" class="form-select">
+              <option value="name">Name (A-Z)</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" value="" id="instockOnly">
+              <label class="form-check-label" for="instockOnly">In Stock Only</label>
+            </div>
+          </div>
+
+          <div class="filter-actions">
+            <button class="btn btn-success" onclick="applyFilters()"><i class="fa-solid fa-filter me-2"></i>Apply Filters</button>
+            <button class="btn btn-outline-secondary" onclick="clearAllFilters()"><i class="fa-solid fa-times me-2"></i>Clear All</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+                
+<div class="bg-success p-3 text-center mx-2 rounded-3">
+    <p>All rights reserved © - Designed by Relational Minds</p>
+</div> 
+    </div>
+
+<!-- Database Integration JavaScript -->
+<script>
+// Sample data that matches your database schema
+const demoProducts = [
+    { product_id: 1, product_name: "Fresh Apples", description: "Crisp and juicy red apples, perfect for snacking or cooking. Rich in fiber and vitamins.", short_description: "Crisp and juicy red apples", price: 120.00, discount_price: null, image_url: "./images/apple.png", category_name: "Fruits", brand_name: "Fresh Farm", stock_quantity: 50, sku: "FRU-APP-001" },
+    { product_id: 2, product_name: "Organic Carrots", description: "Fresh organic carrots, rich in vitamins and perfect for healthy cooking.", short_description: "Fresh organic carrots, rich in vitamins", price: 80.00, discount_price: null, image_url: "./images/carrot.png", category_name: "Vegetables", brand_name: "Green Valley", stock_quantity: 30, sku: "VEG-CAR-001" },
+    { product_id: 3, product_name: "Cow Milk", description: "Fresh pasteurized cow milk, 1 liter. Perfect for daily consumption.", short_description: "Fresh pasteurized cow milk, 1 liter", price: 60.00, discount_price: null, image_url: "./images/cowmilk.png", category_name: "Dairy", brand_name: "Dairy Fresh", stock_quantity: 100, sku: "DAI-MIL-001" },
+    { product_id: 4, product_name: "Greek Yogurt", description: "Creamy Greek yogurt, high in protein and probiotics. Perfect for breakfast or snacks.", short_description: "Creamy Greek yogurt, high in protein", price: 150.00, discount_price: 120.00, image_url: "./images/greekyoghurt.png", category_name: "Dairy", brand_name: "Yogurt Co", stock_quantity: 25, sku: "DAI-YOG-001" },
+    { product_id: 5, product_name: "Almond Milk", description: "Plant-based almond milk, lactose-free and rich in nutrients.", short_description: "Plant-based almond milk, lactose-free", price: 200.00, discount_price: null, image_url: "./images/almondmilk.png", category_name: "Beverages", brand_name: "Nutty Good", stock_quantity: 40, sku: "BEV-ALM-001" },
+    { product_id: 6, product_name: "Capsicum", description: "Fresh green capsicum, perfect for cooking and salads.", short_description: "Fresh green capsicum, perfect for cooking", price: 90.00, discount_price: null, image_url: "./images/capsicum1.png", category_name: "Vegetables", brand_name: "Veggie Fresh", stock_quantity: 35, sku: "VEG-CAP-001" },
+    { product_id: 7, product_name: "Mango", description: "Sweet and juicy mangoes, seasonal special. Rich in vitamin C and antioxidants.", short_description: "Sweet and juicy mangoes, seasonal special", price: 180.00, discount_price: 150.00, image_url: "./images/mango2.png", category_name: "Fruits", brand_name: "Tropical Fruits", stock_quantity: 20, sku: "FRU-MAN-001" },
+    { product_id: 8, product_name: "Coconut Water", description: "Natural coconut water, refreshing and hydrating drink.", short_description: "Natural coconut water, refreshing drink", price: 50.00, discount_price: null, image_url: "./images/coconutwater.jpg", category_name: "Beverages", brand_name: "Coco Fresh", stock_quantity: 60, sku: "BEV-COC-001" },
+    { product_id: 9, product_name: "Ethnic Wear", description: "Beautiful traditional ethnic clothing, perfect for festivals and special occasions.", short_description: "Beautiful traditional ethnic clothing", price: 2500.00, discount_price: 2000.00, image_url: "./images/ethnic1.jpg", category_name: "Clothing", brand_name: "Fashion Hub", stock_quantity: 15, sku: "CLO-ETH-001" }
+];
+
+let cart = [];
+let currentUser = null;
+let filteredProducts = [...demoProducts];
+
+// Initialize the app
+document.addEventListener('DOMContentLoaded', function() {
+  // Load session first to update UI (welcome text / login-logout) and show any flash messages
+  loadSession()
+    .then(() => loadFilters())
+    .finally(() => {
+      displayProducts(demoProducts);
+      updateCartDisplay();
+      showDatabaseInfo();
+    });
+});
+
+// Load current session info (user + flash messages)
+function loadSession() {
+  return fetch('./api/session.php', { method: 'GET', credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(json => {
+      if (json.logged_in && json.user) {
+        const name = json.user.first_name || json.user.username || 'User';
+        const welcome = document.getElementById('welcome-user');
+        if (welcome) welcome.textContent = `Welcome ${name}`;
+
+        const loginLink = document.getElementById('login-logout');
+        if (loginLink) { loginLink.textContent = 'Logout'; loginLink.setAttribute('href', 'logout.php'); }
+      }
+
+      if (json.flash) {
+        showNotification(json.flash, 'success');
+      }
+    }).catch(err => {
+      console.warn('Session load failed', err);
+    });
+}
+
+// Load brands & categories from API and render into filter panel
+function loadFilters() {
+  const brandsList = document.getElementById('brands-list');
+  const catsList = document.getElementById('categories-list');
+
+  // Fetch brands
+  return Promise.all([
+    fetch('./api/get_brands.php').then(r => r.json()).catch(()=>[]),
+    fetch('./api/get_categories.php').then(r => r.json()).catch(()=>[])
+  ]).then(([brands, cats]) => {
+    if (Array.isArray(brands)) {
+      document.getElementById('brands-count').textContent = brands.length;
+      if (brands.length === 0) brandsList.innerHTML = '<div class="text-muted">No brands available</div>';
+      else brandsList.innerHTML = brands.map((b, idx) => `
+        <div class="form-check">
+          <input class="form-check-input brand-filter-check" type="checkbox" value="${escapeHtml(b.brand_name)}" id="brand_${idx}" onchange="applyFilters()">
+          <label class="form-check-label" for="brand_${idx}">${escapeHtml(b.brand_name)}</label>
+        </div>
+      `).join('');
+    } else {
+      brandsList.innerHTML = '<div class="text-danger">Error loading brands</div>';
+    }
+
+    if (Array.isArray(cats)) {
+      document.getElementById('categories-count').textContent = cats.length;
+      if (cats.length === 0) catsList.innerHTML = '<div class="text-muted">No categories available</div>';
+      else catsList.innerHTML = cats.map((c, idx) => `
+        <div class="form-check">
+          <input class="form-check-input category-filter-check" type="checkbox" value="${escapeHtml(c.category_name)}" id="cat_${idx}" onchange="applyFilters()">
+          <label class="form-check-label" for="cat_${idx}">${escapeHtml(c.category_name)}</label>
+        </div>
+      `).join('');
+    } else {
+      catsList.innerHTML = '<div class="text-danger">Error loading categories</div>';
+    }
+  }).catch(err => {
+    if (brandsList) brandsList.innerHTML = '<div class="text-danger">Failed to load filters</div>';
+    if (catsList) catsList.innerHTML = '<div class="text-danger">Failed to load filters</div>';
+  });
+}
+
+// small helper to escape HTML in template strings
+function escapeHtml(str) {
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+// Show database information
+function showDatabaseInfo() {
+    console.log('🗄️ Database Schema Information:');
+    console.log('Database: easycart_db');
+    console.log('Tables: 15 interconnected tables');
+    console.log('Products loaded: ' + demoProducts.length);
+    console.log('Categories: Fruits, Vegetables, Dairy, Beverages, Clothing');
+    console.log('Brands: Fresh Farm, Green Valley, Dairy Fresh, Yogurt Co, Nutty Good, Veggie Fresh, Tropical Fruits, Coco Fresh, Fashion Hub');
+}
+
+// Display products
+function displayProducts(products) {
+    const container = document.getElementById('products-container');
+    container.innerHTML = '';
+
+    products.forEach(product => {
+        const finalPrice = product.discount_price || product.price;
+        const originalPrice = product.discount_price ? product.price : null;
+
+        const productCard = document.createElement('div');
+        productCard.className = 'col-md-4 mb-4 d-flex';
+        productCard.innerHTML = `
+            <div class="card w-100 h-100">
+                <img src="${product.image_url}" class="card-img-top" alt="${product.product_name}">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${product.product_name}</h5>
+                    <p class="card-text">${product.short_description}</p>
+                    <div class="mt-auto d-flex gap-2 align-items-center">
+                        <div class="price-container">
+                            ${originalPrice ? `<span class="text-decoration-line-through text-muted me-2">₹${originalPrice}</span>` : ''}
+                            <span class="fw-bold me-auto">₹${finalPrice}</span>
+                        </div>
+                        <button class="btn btn-warning" onclick="addToCart(${product.product_id})">
+                            Add to cart
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewProduct(${product.product_id})">
+                            View more
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(productCard);
+    });
+}
+
+// Add to cart
+function addToCart(productId) {
+    const product = demoProducts.find(p => p.product_id === productId);
+    if (product) {
+        const existingItem = cart.find(item => item.product_id === productId);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({
+                product_id: productId,
+                product_name: product.product_name,
+                price: product.discount_price || product.price,
+                quantity: 1,
+                image_url: product.image_url,
+                sku: product.sku
+            });
+        }
+        updateCartDisplay();
+        showNotification('Product added to cart!', 'success');
+    }
+}
+
+// Update cart display
+function updateCartDisplay() {
+    const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+    const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    
+    document.getElementById('cart-count').textContent = cartCount;
+    document.getElementById('total-price').textContent = `Total Price: ₹${cartTotal}/-`;
+}
+
+// Search products
+function searchProducts() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    if (searchTerm) {
+        filteredProducts = demoProducts.filter(product => 
+            product.product_name.toLowerCase().includes(searchTerm) ||
+            product.description.toLowerCase().includes(searchTerm) ||
+            product.category_name.toLowerCase().includes(searchTerm) ||
+            product.brand_name.toLowerCase().includes(searchTerm)
+        );
+    } else {
+        filteredProducts = [...demoProducts];
+    }
+    displayProducts(filteredProducts);
+}
+
+// Filter by category
+function filterByCategory(category) {
+    filteredProducts = demoProducts.filter(product => product.category_name === category);
+    displayProducts(filteredProducts);
+    showNotification(`Filtered by category: ${category}`, 'info');
+}
+
+// Filter by brand
+function filterByBrand(brand) {
+    filteredProducts = demoProducts.filter(product => product.brand_name === brand);
+    displayProducts(filteredProducts);
+    showNotification(`Filtered by brand: ${brand}`, 'info');
+}
+
+// Apply filters from checkboxes and other options
+function applyFilters() {
+    // Get checked brands and categories
+    const checkedBrands = Array.from(document.querySelectorAll('.brand-filter-check:checked')).map(cb => cb.value);
+    const checkedCategories = Array.from(document.querySelectorAll('.category-filter-check:checked')).map(cb => cb.value);
+    
+    // Get price range
+    const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+    const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+    
+    // Get sort option
+    const sortOption = document.getElementById('sortSelect').value || 'name';
+    
+    // Get in-stock filter
+    const inStockOnly = document.getElementById('instockOnly').checked;
+    
+    // Filter products
+    filteredProducts = demoProducts.filter(product => {
+        // Brand filter
+        if (checkedBrands.length > 0 && !checkedBrands.includes(product.brand_name)) return false;
+        
+        // Category filter
+        if (checkedCategories.length > 0 && !checkedCategories.includes(product.category_name)) return false;
+        
+        // Price filter
+        const price = product.discount_price || product.price;
+        if (price < minPrice || price > maxPrice) return false;
+        
+        // Stock filter
+        if (inStockOnly && product.stock_quantity <= 0) return false;
+        
+        return true;
+    });
+    
+    // Sort products
+    if (sortOption === 'name') {
+        filteredProducts.sort((a, b) => a.product_name.localeCompare(b.product_name));
+    } else if (sortOption === 'price-asc') {
+        filteredProducts.sort((a, b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+    } else if (sortOption === 'price-desc') {
+        filteredProducts.sort((a, b) => (b.discount_price || b.price) - (a.discount_price || a.price));
+    }
+    
+    displayProducts(filteredProducts);
+}
+
+// Clear all filters
+function clearAllFilters() {
+    // Uncheck all checkboxes
+    document.querySelectorAll('.brand-filter-check, .category-filter-check').forEach(cb => cb.checked = false);
+    document.getElementById('instockOnly').checked = false;
+    
+    // Reset price inputs
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    
+    // Reset sort
+    document.getElementById('sortSelect').value = 'name';
+    
+    // Show all products
+    filteredProducts = [...demoProducts];
+    displayProducts(filteredProducts);
+}
+
+// Apply filters from checkboxes
+function applyFilters() {
+    // Get checked brands and categories
+    const checkedBrands = Array.from(document.querySelectorAll('.brand-filter-check:checked')).map(cb => cb.value);
+    const checkedCategories = Array.from(document.querySelectorAll('.category-filter-check:checked')).map(cb => cb.value);
+    
+    // Get price range
+    const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+    const maxPrice = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+    
+    // Get sort option
+    const sortOption = document.getElementById('sortSelect').value || 'name';
+    
+    // Get in-stock filter
+    const inStockOnly = document.getElementById('instockOnly').checked;
+    
+    // Filter products
+    filteredProducts = demoProducts.filter(product => {
+        // Brand filter
+        if (checkedBrands.length > 0 && !checkedBrands.includes(product.brand_name)) return false;
+        
+        // Category filter
+        if (checkedCategories.length > 0 && !checkedCategories.includes(product.category_name)) return false;
+        
+        // Price filter
+        const price = product.discount_price || product.price;
+        if (price < minPrice || price > maxPrice) return false;
+        
+        // Stock filter
+        if (inStockOnly && product.stock_quantity <= 0) return false;
+        
+        return true;
+    });
+    
+    // Sort products
+    if (sortOption === 'name-asc') {
+        filteredProducts.sort((a, b) => a.product_name.localeCompare(b.product_name));
+    } else if (sortOption === 'name-desc') {
+        filteredProducts.sort((a, b) => b.product_name.localeCompare(a.product_name));
+    } else if (sortOption === 'price-asc') {
+        filteredProducts.sort((a, b) => (a.discount_price || a.price) - (b.discount_price || b.price));
+    } else if (sortOption === 'price-desc') {
+        filteredProducts.sort((a, b) => (b.discount_price || b.price) - (a.discount_price || a.price));
+    }
+    
+    displayProducts(filteredProducts);
+}
+
+// Clear all filters
+function clearAllFilters() {
+    // Uncheck all checkboxes
+    document.querySelectorAll('.brand-filter-check, .category-filter-check').forEach(cb => cb.checked = false);
+    document.getElementById('instockOnly').checked = false;
+    
+    // Reset price inputs
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    
+    // Reset sort
+    document.getElementById('sortSelect').value = 'name';
+    
+    // Show all products
+    filteredProducts = [...demoProducts];
+    displayProducts(filteredProducts);
+}
+
+// Apply price filter (alias for applyFilters)
+function applyPrice() {
+    applyFilters();
+}
+
+// Apply price filter
+function applyPrice() {
+    applyFilters();
+}
+
+// View product details
+function viewProduct(productId) {
+    const product = demoProducts.find(p => p.product_id === productId);
+    if (product) {
+        const finalPrice = product.discount_price || product.price;
+        const originalPrice = product.discount_price ? product.price : null;
+        
+        let details = `Product: ${product.product_name}\n`;
+        details += `SKU: ${product.sku}\n`;
+        details += `Description: ${product.description}\n`;
+        details += `Category: ${product.category_name}\n`;
+        details += `Brand: ${product.brand_name}\n`;
+        details += `Price: ₹${finalPrice}`;
+        if (originalPrice) {
+            details += ` (Original: ₹${originalPrice})`;
+        }
+        details += `\nStock: ${product.stock_quantity} units`;
+        
+        alert(details);
+    }
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+// Search on input
+document.getElementById('search-input').addEventListener('input', function() {
+    searchProducts();
+});
+</script>
+
+<!-- bootstrap js link -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
